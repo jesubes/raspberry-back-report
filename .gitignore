@@ -1,0 +1,13 @@
+/.wwebjs_auth
+/.wwebjs_cache
+node_modules/
+
+# Dockerfile
+
+reportImage/*
+
+!reportImage
+
+.DS_Store
+
+.env
