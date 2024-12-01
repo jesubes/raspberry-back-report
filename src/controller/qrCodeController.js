@@ -62,7 +62,7 @@ client.initialize().catch(error => {
 const testMessage =  async (req, res) => {
 
     const number = '5493816450030'; // Número de teléfono con código de país, sin signos de '+'
-    const message = 'Este es el BOT DE JESUS de Web'
+    const message = 'Este es el BOT DE JESUS que envia automatico'
     const chatId = `${number}@c.us`; // '@c.us' es el identificador de usuarios en WhatsApp Web
 
     try {
