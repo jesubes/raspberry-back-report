@@ -17,7 +17,7 @@ const puppeteerOptions = {
         // '--disable-gpu'
     ],
     executablePath: '/usr/bin/chromium-browser', //ruta del binario de Chromium
-    userDataDir: '/tmp/puppeteer_data' //Directorio temporal para el perfil
+    // userDataDir: '/tmp/puppeteer_data' //Directorio temporal para el perfil
     
 }
 
