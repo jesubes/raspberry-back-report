@@ -42,7 +42,7 @@ const jsonToImage = async (jsonData, phone) => {
 
     //convertir estilo a image
     const browser = await puppeteer.launch({
-        headless: true, 
+        headless: true,  //en modo oculto
         args: [
             '--no-sandbox',
             '--disable-setuid-sandbox',
