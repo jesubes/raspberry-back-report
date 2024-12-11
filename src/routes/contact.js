@@ -2,7 +2,7 @@
 
 const {Router} = require('express')
 const multer = require('multer')
-const {excelToJsonContact} = require('../controllers/excelConvertController.js') //todo: Ingresar el archivo 
+const {excelToJsonContact} = require('../controller/excelConvertController.js') //todo: Ingresar el archivo 
 
 
 const router = Router();

@@ -38,10 +38,7 @@ const excelExtract = async (req = request, res) => {
                 ${htmlData}
             </body>
             </html>        
-        `;
-
-        console.log('html generado del excel Report-Sap');
-        
+        `;     
 
         return res.send(
             styledHtml
@@ -53,7 +50,7 @@ const excelExtract = async (req = request, res) => {
 }
 
 
-//devolver un json desde un excel
+//devolver un json desde un excel con filtro de columnas 
 const excelToJson = async( req, res ) =>{
     const workbook = XLSX.read( req.file.buffer, { type: 'buffer' });
     const sheetName = workbook.SheetNames[0]
@@ -83,19 +80,14 @@ const excelToJsonContact = async (req, res) =>{
         if(!req.file){
             return res.status(400).send('No se cargó ningun archivo...')
         }
-
         const workbook = XLSX.read(req.file.buffer, {type: 'buffer'}) // leer el archivo del buffer con XLSX
-
         const worksheet = workbook.Sheets[workbook.SheetNames[0]] // convertir la primera hoja a JSON
-
         const jsonData = XLSX.utils.sheet_to_json(worksheet);
-
         //validación de datps - nombre y su numero de telefono
-        const resultDataFilter = await filterToJSON(["Almacén","Nombre","Numero"], jsonData);
-
+        const resultDataFilter = await filterToJSON(["Almacén","Nombre","Numero","Supervisor"], jsonData);
         //se devuelve limpio, sin capos vacios
         const resultNoNull = resultDataFilter.filter((item) => {
-            if(item.Nombre && item.Numero) {
+            if(item.Nombre && item.Numero && item.Almacén) {
                 return item
             }
         })

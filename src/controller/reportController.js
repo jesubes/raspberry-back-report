@@ -14,19 +14,19 @@ const reportForMsg = async (req, res) =>{
 
     const { number = number.toString(), name} = req.query
     const jsonData = req.body
-
+    
     //mandamos el JSON a convertir en imagen
-    const imageJpg = await jsonToImage(jsonData, number)
-
+    await jsonToImage(jsonData, number)
+    
     //datos de whatsapp
     const prefixNumber = `549${number}`
     const mediaWs = MessageMedia.fromFilePath(`./reportImage/materiales${number}.jpg`)
-
-    try{
+    
+    try{              
         const contactId = await whatsapp.getNumberId(prefixNumber)
         if(contactId){
             await whatsapp.sendMessage(contactId._serialized, `Hola ${name}, \nTe envio el stock en tu almacén: `)
-            new Promise(resolve => setTimeout(resolve, 1000))
+            new Promise(resolve => setTimeout(resolve, 500))
             const response = await whatsapp.sendMessage(contactId._serialized, mediaWs)
 
             console.log('Mensaje enviado -> ', response.fromMe);

@@ -16,15 +16,15 @@ const puppeteerOptions = {
         // '--single-process', // Importante para evitar múltiples procesos en contenedores Docker
         // '--disable-gpu'
     ],
-    executablePath: '/usr/bin/chromium', //ruta del binario de Chromium
-    // userDataDir: '/tmp/puppeteer_data' //Directorio temporal para el perfil
+    // executablePath: '/usr/bin/chromium', //ruta del binario de Chromium  ---> solo en Macbook descactivar
+    
     
 }
 
 //validar la peticion
 const client = new Client({
     puppeteer: puppeteerOptions,
-    // authStrategy: new LocalAuth() //mantener sesion local
+    authStrategy: new LocalAuth() //mantener sesion local
 })
 
 client.once('ready', () => {

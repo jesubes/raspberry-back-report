@@ -1,7 +1,7 @@
 //path --> report:     '/api/report',
 
 const { Router } = require('express');
-const { reportForMsg } = require('../controllers/reportController');
+const { reportForMsg } = require('../controller/reportController');
 
 const router = Router();
 

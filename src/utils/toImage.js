@@ -48,7 +48,7 @@ const jsonToImage = async (jsonData, phone) => {
             '--disable-setuid-sandbox',
             '--disable-dev-shm-usage'
         ],
-        executablePath: '/usr/bin/chromium' //ruta del binario de chromium
+        // executablePath: '/usr/bin/chromium' //ruta del binario de chromium //solo en Macbook desactivar
     });
     const pageOj = await browser.newPage();
     await pageOj.setContent(styledHtml);
