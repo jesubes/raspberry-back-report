@@ -36,11 +36,8 @@ RUN npm install
 # copiar el resto del código
 COPY . .
 
-# Configurar Puppeteer para usar Chromium del sistema
-# ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
+# Expone el puerto 
+EXPOSE 5040
 
-# Expone el puerto en el que corre tu aplicacion 
-EXPOSE 4040
-
-# Comando para ejecutar la aplicacion
+# Comando para ejecutar
 CMD ["npm", "start"]

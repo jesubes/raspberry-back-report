@@ -1,5 +1,4 @@
 
-
 //filtrar datos con campos necesarios
 const filterToJSON = (arrayFilter = [], jsonDataTofilter) =>{
     let filterColumn = [];

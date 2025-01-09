@@ -1,11 +1,13 @@
+// ----> /api/qrcode
+
 const { Router } = require('express')
-const {qrGenerate } = require('../controller/qrCodeController')
+const {startWhatsappForClient,qrGenerate } = require('../controller/qrCodeController')
 
 const router = Router();
 
-//importar middlewares
 
-router.get('/', qrGenerate)
+router.get('/gen/:id', qrGenerate)
+router.get('/start/:id', startWhatsappForClient)
 
 
 module.exports = router
