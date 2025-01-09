@@ -36,7 +36,7 @@ Se muestra el formato de excel del archivo de contactos a enviar el listado de m
 ## Captura de la aplicación
 
 ![Captura de app](/assets/appReport1.png)
-![Captura de app](/assets/appReport2.png)
+![Captura de app](/assets/appreport2.png)
 
 ## Servidor Raspberry pi 5
 
