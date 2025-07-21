@@ -1,82 +1,87 @@
-const { default: puppeteer } = require('puppeteer');
-const XLSX = require('xlsx')
+// =======================================================================================
+//                                  UTILIDAD DE CONVERSIÓN JSON A IMAGEN
+// =======================================================================================
 
-//de un json lo convertimos en images y lo retorna
+const XLSX = require('xlsx');
+// Importamos la función para obtener la instancia global del navegador desde nuestro servicio.
+const { getBrowser } = require('../services/browserService');
+
+/**
+ * Convierte un array de objetos JSON en una imagen JPG que contiene una tabla HTML.
+ * @param {object[]} jsonData - El array de objetos a convertir.
+ * @param {string} phone - El número de teléfono del destinatario, usado para nombrar el archivo de imagen.
+ * @returns {Promise<boolean>} Una promesa que resuelve a `true` si la imagen se creó con éxito, o `false` si falló.
+ */
 const jsonToImage = async (jsonData, phone) => {
 
-    // ordenar de forma ascendente
+    // Ordenamos los datos alfabéticamente por el campo 'Texto breve de material' para una mejor presentación.
     const sortedJsonData = jsonData.sort((a, b) =>
         a['Texto breve de material'].localeCompare(b['Texto breve de material'])
-    )
+    );
     
-    //hay que tener en cuenta que es un array de objeto para crear una hoja de calculo de excel
-    const newWorkSheet = XLSX.utils.json_to_sheet(sortedJsonData)
+    // Creamos una nueva hoja de cálculo en memoria a partir de nuestros datos JSON ordenados.
+    const newWorkSheet = XLSX.utils.json_to_sheet(sortedJsonData);
 
-    //convertir a html
-    const tableHtml = XLSX.utils.sheet_to_html(newWorkSheet)
+    // Convertimos la hoja de cálculo a una tabla HTML básica.
+    const tableHtml = XLSX.utils.sheet_to_html(newWorkSheet);
 
-    //dar Estilo a la tabla
+    // Envolvemos la tabla en un documento HTML completo con estilos CSS para darle formato.
     const styledHtml = `
         <!DOCTYPE html>
         <html lang="en">
         <head>
-            <meta charaset="UTF-8">
+            <meta charset="UTF-8">
             <style>
-                table{
-                    width: 100%;
-                    border-collapse: collapse;
-                }
-                th, td {
-                    border: 1px solid black;
-                    padding: 8px;
-                    text-align: left;
-                }
+                table { width: 100%; border-collapse: collapse; font-family: sans-serif; }
+                th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+                th { background-color: #f2f2f2; }
             </style>
         </head>
         <body>
             ${tableHtml}
         </body>
-        <body>
+        </html>
     `;
 
+    // Obtenemos la instancia única y compartida del navegador desde nuestro servicio.
+    const browser = getBrowser();
+    // Abrimos una nueva página (pestaña) en el navegador. Es mucho más rápido que lanzar un navegador nuevo.
+    const page = await browser.newPage();
 
-    //convertir estilo a image
-    const browser = await puppeteer.launch({
-        headless: true,  //en modo oculto
-        args: [
-            '--no-sandbox',
-            '--disable-setuid-sandbox',
-            '--disable-dev-shm-usage'
-        ],
-        // executablePath: '/usr/bin/chromium' //ruta del binario de chromium //solo en Macbook desactivar
-    });
-    const pageOj = await browser.newPage();
-    await pageOj.setContent(styledHtml);
+    try {
+        // Cargamos nuestro HTML con estilos en la página.
+        await page.setContent(styledHtml);
 
-    //dimensiones
-    const rowHeight = 20; //20px por fila
-    const totalHeight = Math.min(rowHeight * jsonData.length, 1200);
+        // Ajustamos el tamaño del viewport (la ventana visible) para que la tabla quepa.
+        // Esto es importante para que el screenshot capture todo el contenido correctamente.
+        const rowHeight = 35; // Altura estimada por fila en píxeles.
+        const totalHeight = Math.max(rowHeight * (jsonData.length + 1), 100); // +1 por la cabecera, con un mínimo.
 
+        await page.setViewport({
+            width: 900, // Ancho de la imagen.
+            height: totalHeight // Alto calculado.
+        });
 
-    await pageOj.setViewport({
-        width: 900,
-        height: totalHeight
-    })
+        // Definimos la ruta donde se guardará la imagen del reporte.
+        const jpgFilePath = `./reportImage/materiales${phone}.jpg`;
 
-    const jpgFilePath = `./reportImage/materiales${phone}.jpg`
+        // Tomamos un screenshot de la página y la guardamos en la ruta especificada.
+        await page.screenshot({ path: jpgFilePath, fullPage: true });
 
-    try{
-        await pageOj.screenshot({path: jpgFilePath, fullPage: true})
-        await browser.close();
-
+        console.log(`Imagen de reporte generada con éxito en: ${jpgFilePath}`);
         return true;
-    }catch( error ){
-        console.error('Error al convertir a Imagen el JSON: ', error)
 
+    } catch (error) {
+        console.error('Error al convertir el JSON a imagen:', error);
         return false;
+    } finally {
+        // Bloque `finally`: este código se ejecuta siempre, tanto si hay éxito como si hay un error.
+        // Es crucial cerrar la página para liberar sus recursos de memoria.
+        await page.close();
+        console.log('Página de Puppeteer cerrada.');
     }
-}
+};
 
 module.exports = {
     jsonToImage
-}
+};
